@@ -1,12 +1,13 @@
 const router = require("express").Router();
+const { getUsers, createUser, getUser } = require("../controllers/users");
 
 //curl http://localhost:3001/users
-router.get("/", () => console.log("GET users"));
+router.get("/", getUsers);
 
 //curl http://localhost:3001/users/123
-router.get("/:userId", () => console.log("GET users by Id"));
+router.get("/:userId", getUser);
 
 //curl -X POST http://localhost:3001/users
-router.post("/", () => console.log("POST users"));
+router.post("/", createUser);
 
 module.exports = router;

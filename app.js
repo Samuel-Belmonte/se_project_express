@@ -13,6 +13,8 @@ mongoose
   })
   .catch(console.error);
 
+//express.json() must go before mainRouter
+app.use(express.json());
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {

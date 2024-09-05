@@ -1,13 +1,18 @@
 const router = require("express").Router();
+const {
+  getItems,
+  createItem,
+  deleteItem,
+} = require("../controllers/clothingItems");
 
 //curl http://localhost:3001/items
-router.get("/", () => console.log("GET all clothing items"));
+router.get("/", getItems);
 
 //curl -X POST http://localhost:3001/items
-router.post("/", () => console.log("POST new item"));
+router.post("/", createItem);
 
 //curl -X DELETE http://localhost:3001/items/:itemId
-router.delete("/:itemId", () => console.log("DELETE an item by Id"));
+router.delete("/:itemId", deleteItem);
 
 //curl -X PUT http://localhost:3001/:itemId/likes
 router.put("/:itemId/likes", () => console.log("Like by an item by Id"));

@@ -40,4 +40,4 @@ const clothingItemsSchema = new mongoose.Schema({
   },
 });
 
-modules.exports = mongoose.model("clothingItems", clothingItemsSchema);
+module.exports = mongoose.model("clothingItems", clothingItemsSchema);

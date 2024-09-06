@@ -18,7 +18,7 @@ const createItem = (req, res) => {
 
   //name, weather, imageUrl, and owner from schema
   Item.create({ name, weather, imageUrl, owner })
-    .then((item) => res.status(201).send({ data: item }))
+    .then((item) => res.status(201).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {

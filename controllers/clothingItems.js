@@ -49,8 +49,12 @@ const deleteItem = (req, res) => {
 
 //PUT /items/:itemId/likes - like an item - likeItem
 const likeItem = (req, res) => {
-  const { userId } = req.params;
-  Item.findById(userId)
+  const { userId } = req.params.itemId;
+  Item.findByIdAndUpdate(
+    userId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
@@ -66,8 +70,12 @@ const likeItem = (req, res) => {
 
 //DELETE /items/:itemId/likes - unlike an item - dislikeItem
 const dislikeItem = (req, res) => {
-  const { userId } = req.params;
-  Item.findByIdAndRemove(userId)
+  const { userId } = req.params.itemId;
+  Item.findByIdAndUpdate(
+    userId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {

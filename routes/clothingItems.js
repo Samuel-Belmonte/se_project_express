@@ -3,6 +3,8 @@ const {
   getItems,
   createItem,
   deleteItem,
+  likeItem,
+  dislikeItem,
 } = require("../controllers/clothingItems");
 
 //curl http://localhost:3001/items
@@ -15,9 +17,9 @@ router.post("/", createItem);
 router.delete("/:itemId", deleteItem);
 
 //curl -X PUT http://localhost:3001/:itemId/likes
-router.put("/:itemId/likes", () => console.log("Like by an item by Id"));
+router.put("/:itemId/likes", likeItem);
 
 //curl -X DELETE http://localhost:3001/:itemId/likes
-router.delete("/:itemId/likes", () => console.log("Dislike by an item by Id"));
+router.delete("/:itemId/likes", dislikeItem);
 
 module.exports = router;

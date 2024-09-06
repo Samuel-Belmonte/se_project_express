@@ -18,7 +18,7 @@ const createItem = (req, res) => {
 
   //name, weather, imageUrl, and owner from schema
   Item.create({ name, weather, imageUrl, owner })
-    .then((item) => res.status(201).send(item))
+    .then((item) => res.status(201).send({ data: item }))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -48,6 +48,37 @@ const deleteItem = (req, res) => {
 };
 
 //PUT /items/:itemId/likes - like an item - likeItem
-//DELETE /items/:itemId/likes - unlike an item - dislikeItem
+const likeItem = (req, res) => {
+  const { userId } = req.params;
+  Item.findById(userId)
+    .orFail()
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      } else if (err.name === "CastError") {
+        return res.status(400).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
+    });
+};
 
-module.exports = { getItems, createItem, deleteItem };
+//DELETE /items/:itemId/likes - unlike an item - dislikeItem
+const dislikeItem = (req, res) => {
+  const { userId } = req.params;
+  Item.findByIdAndRemove(userId)
+    .orFail()
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      } else if (err.name === "CastError") {
+        return res.status(400).send({ message: err.message });
+      }
+      return res.status(500).send({ message: err.message });
+    });
+};
+
+module.exports = { getItems, createItem, deleteItem, likeItem, dislikeItem };

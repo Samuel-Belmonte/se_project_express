@@ -5,7 +5,7 @@ const mainRouter = require("./routes/index");
 const app = express();
 const { PORT = 3001 } = process.env;
 
-//database name is wtwr_db
+// database name is wtwr_db
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
   .then(() => {
@@ -20,7 +20,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//express.json() must go before mainRouter
+// express.json() must go before mainRouter
 app.use(express.json());
 app.use("/", mainRouter);
 

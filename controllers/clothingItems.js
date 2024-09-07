@@ -1,5 +1,11 @@
 const Item = require("../models/clothingItems");
 
+const {
+  defaultError,
+  castError,
+  documentNotFoundError,
+} = require("../utils/error");
+
 //Get /items - returns all clothing items - getItem
 const getItems = (req, res) => {
   Item.find({})
@@ -7,7 +13,7 @@ const getItems = (req, res) => {
     .catch((err) => {
       console.error(err);
       //change 500 so it isn't hard coded
-      return res.status(500).send({ message: err.message });
+      return res.status(defaultError).send({ message: err.message });
     });
 };
 
@@ -22,9 +28,9 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(castError).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(defaultError).send({ message: err.message });
     });
 };
 
@@ -38,12 +44,12 @@ const deleteItem = (req, res) => {
       console.error(err);
       //delete an item with an _id that does not exist in the database
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(documentNotFoundError).send({ message: err.message });
       } else if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(castError).send({ message: err.message });
       }
       //delete a user with an _id that does not exist in the database
-      return res.status(500).send({ message: err.message });
+      return res.status(defaultError).send({ message: err.message });
     });
 };
 
@@ -56,15 +62,15 @@ const likeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((item) => res.status(200).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(documentNotFoundError).send({ message: err.message });
       } else if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(castError).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(defaultError).send({ message: err.message });
     });
 };
 
@@ -77,15 +83,15 @@ const dislikeItem = (req, res) => {
     { new: true }
   )
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((item) => res.status(200).send(item))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(documentNotFoundError).send({ message: err.message });
       } else if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(castError).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(defaultError).send({ message: err.message });
     });
 };
 

@@ -1,5 +1,11 @@
 const User = require("../models/users");
 
+const {
+  defaultError,
+  castError,
+  documentNotFoundError,
+} = require("../utils/error");
+
 //GET /users - returns all users
 const getUsers = (req, res) => {
   User.find({})
@@ -7,7 +13,7 @@ const getUsers = (req, res) => {
     .catch((err) => {
       console.error(err);
       //change 500 so it isn't hard coded
-      return res.status(500).send({ message: err.message });
+      return res.status(defaultError).send({ message: err.message });
     });
 };
 
@@ -21,9 +27,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(castError).send({ message: err.message });
       }
-      return res.status(500).send({ message: err.message });
+      return res.status(defaultError).send({ message: err.message });
     });
 };
 
@@ -38,12 +44,12 @@ const getUser = (req, res) => {
       console.error(err);
       //get a user with an _id that does not exist in the database
       if (err.name === "DocumentNotFoundError") {
-        return res.status(404).send({ message: err.message });
+        return res.status(documentNotFoundError).send({ message: err.message });
       } else if (err.name === "CastError") {
-        return res.status(400).send({ message: err.message });
+        return res.status(castError).send({ message: err.message });
       }
       //get a user with an _id that does not exist in the database
-      return res.status(500).send({ message: err.message });
+      return res.status(defaultError).send({ message: err.message });
     });
 };
 

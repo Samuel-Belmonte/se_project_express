@@ -13,7 +13,9 @@ const getUsers = (req, res) => {
     .catch((err) => {
       console.error(err);
       // change 500 so it isn't hard coded
-      return res.status(defaultError).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occured on the server" });
     });
 };
 
@@ -27,9 +29,11 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(castError).send({ message: err.message });
+        return res.status(castError).send({ message: "Invalid data" });
       }
-      return res.status(defaultError).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occured on the server" });
     });
 };
 
@@ -47,10 +51,12 @@ const getUser = (req, res) => {
         return res.status(documentNotFoundError).send({ message: err.message });
       }
       if (err.name === "CastError") {
-        return res.status(castError).send({ message: err.message });
+        return res.status(castError).send({ message: "Invalid data" });
       }
       // get a user with an _id that does not exist in the database
-      return res.status(defaultError).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occured on the server" });
     });
 };
 

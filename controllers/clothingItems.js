@@ -13,7 +13,9 @@ const getItems = (req, res) => {
     .catch((err) => {
       console.error(err);
       // change 500 so it isn't hard coded
-      return res.status(defaultError).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -28,9 +30,11 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(castError).send({ message: err.message });
+        return res.status(castError).send({ message: "Invalid data" });
       }
-      return res.status(defaultError).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
@@ -47,16 +51,18 @@ const deleteItem = (req, res) => {
         return res.status(documentNotFoundError).send({ message: err.message });
       }
       if (err.name === "CastError") {
-        return res.status(castError).send({ message: err.message });
+        return res.status(castError).send({ message: "Invalid data" });
       }
       // delete a user with an _id that does not exist in the database
-      return res.status(defaultError).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
 // PUT /items/:itemId/likes - like an item - likeItem
 const likeItem = (req, res) => {
-  const itemId = req.params.itemId;
+  const { itemId } = req.params;
   Item.findByIdAndUpdate(
     itemId,
     { $addToSet: { likes: req.user._id } },
@@ -70,15 +76,17 @@ const likeItem = (req, res) => {
         return res.status(documentNotFoundError).send({ message: err.message });
       }
       if (err.name === "CastError") {
-        return res.status(castError).send({ message: err.message });
+        return res.status(castError).send({ message: "Invalid data" });
       }
-      return res.status(defaultError).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 
 // DELETE /items/:itemId/likes - unlike an item - dislikeItem
 const dislikeItem = (req, res) => {
-  const itemId = req.params.itemId;
+  const { itemId } = req.params;
   Item.findByIdAndUpdate(
     itemId,
     { $pull: { likes: req.user._id } },
@@ -92,9 +100,11 @@ const dislikeItem = (req, res) => {
         return res.status(documentNotFoundError).send({ message: err.message });
       }
       if (err.name === "CastError") {
-        return res.status(castError).send({ message: err.message });
+        return res.status(castError).send({ message: "Invalid data" });
       }
-      return res.status(defaultError).send({ message: err.message });
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 

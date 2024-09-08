@@ -56,9 +56,9 @@ const deleteItem = (req, res) => {
 
 // PUT /items/:itemId/likes - like an item - likeItem
 const likeItem = (req, res) => {
-  const { userId } = req.params.itemId;
+  const itemId = req.params.itemId;
   Item.findByIdAndUpdate(
-    userId,
+    itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
@@ -78,9 +78,9 @@ const likeItem = (req, res) => {
 
 // DELETE /items/:itemId/likes - unlike an item - dislikeItem
 const dislikeItem = (req, res) => {
-  const { userId } = req.params.itemId;
+  const itemId = req.params.itemId;
   Item.findByIdAndUpdate(
-    userId,
+    itemId,
     { $pull: { likes: req.user._id } },
     { new: true }
   )

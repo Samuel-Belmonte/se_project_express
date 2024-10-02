@@ -1,10 +1,15 @@
 const User = require("../models/users");
+const bcrypt = require("bcryptjs");
 
 const {
   defaultError,
   castError,
   documentNotFoundError,
+  duplicationError,
+  unauthorizedError,
 } = require("../utils/error");
+
+const JWT_SECRET = require("../utils/config");
 
 // GET /users - returns all users
 const getUsers = (req, res) => {
@@ -21,13 +26,21 @@ const getUsers = (req, res) => {
 
 // POST /users - creates a new user
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-
-  // name and avatar from schema
-  User.create({ name, avatar })
+  const { name, avatar, email, password } = req.body;
+  bcrypt
+    .hash(password, 10)
+    .then((hash) =>
+      // name and avatar from schema
+      User.create({ name, avatar, email, password: hash })
+    )
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       console.error(err);
+      if (err.name === 11000) {
+        return res
+          .status(duplicationError)
+          .send({ message: "User with this email doesn't exist" });
+      }
       if (err.name === "ValidationError") {
         return res.status(castError).send({ message: "Invalid data" });
       }
@@ -57,6 +70,25 @@ const getUser = (req, res) => {
       return res
         .status(defaultError)
         .send({ message: "An error has occured on the server" });
+    });
+};
+
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      //send token to the client
+      res.send({ token });
+    })
+    .catch((err) => {
+      res
+        .status(unauthorizedError)
+        .send({ message: "Incorrect email or password" });
     });
 };
 

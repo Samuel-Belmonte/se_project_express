@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const User = require("../models/users");
 const bcrypt = require("bcryptjs");
 
@@ -99,18 +100,24 @@ const updateUser = (req, res) => {
     req.user._id,
     { name, avatar },
     { new: true, runValidators: true }
-  ).then((updateUser) => {
-    if (!updateUser) {
-      return res.status(documentNotFoundError).send({ message: "User not found" });
-    }
+  )
+    .then((updateUser) => {
+      if (!updateUser) {
+        return res
+          .status(documentNotFoundError)
+          .send({ message: "User not found" });
+      }
 
-    return res.send(updateUser);
-  }).catch((err)=> {
-    if (err.name === "ValidationError"){
-      return res.status(castError).send({message: "Invalid data"})
-    }
-    res.status(defaultError).send({message: "An error has occured on the server")
-  })
+      return res.send(updateUser);
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(castError).send({ message: "Invalid data" });
+      }
+      res
+        .status(defaultError)
+        .send({ message: "An error has occured on the server" });
+    });
 };
 
 module.exports = { getUsers, createUser, getUser, login, updateUser };

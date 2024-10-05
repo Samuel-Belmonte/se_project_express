@@ -104,7 +104,7 @@ const updateUser = (req, res) => {
       return res.status(documentNotFoundError).send({ message: "User not found" });
     }
 
-    return res.send(user);
+    return res.send(updateUser);
   }).catch((err)=> {
     if (err.name === "ValidationError"){
       return res.status(castError).send({message: "Invalid data"})

@@ -10,7 +10,7 @@ const {
   unauthorizedError,
 } = require("../utils/error");
 
-const JWT_SECRET = require("../utils/config");
+const { JWT_SECRET } = require("../utils/config");
 
 // GET /users - returns all users
 const getUsers = (req, res) => {

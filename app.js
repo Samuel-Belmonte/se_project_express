@@ -13,13 +13,6 @@ mongoose
   })
   .catch(console.error);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "66da78fec706f31748e97494",
-  };
-  next();
-});
-
 // express.json() must go before mainRouter
 app.use(express.json());
 app.use("/", mainRouter);

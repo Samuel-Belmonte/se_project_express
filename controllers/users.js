@@ -92,4 +92,25 @@ const login = (req, res) => {
     });
 };
 
-module.exports = { getUsers, createUser, getUser, login };
+const updateUser = (req, res) => {
+  const { name, avatar } = req.body;
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, avatar },
+    { new: true, runValidators: true }
+  ).then((updateUser) => {
+    if (!updateUser) {
+      return res.status(documentNotFoundError).send({ message: "User not found" });
+    }
+
+    return res.send(user);
+  }).catch((err)=> {
+    if (err.name === "ValidationError"){
+      return res.status(castError).send({message: "Invalid data"})
+    }
+    res.status(defaultError).send({message: "An error has occured on the server")
+  })
+};
+
+module.exports = { getUsers, createUser, getUser, login, updateUser };

@@ -4,6 +4,7 @@ const {
   defaultError,
   castError,
   documentNotFoundError,
+  forbiddenError,
 } = require("../utils/error");
 
 // Get /items - returns all clothing items - getItem
@@ -40,6 +41,20 @@ const createItem = (req, res) => {
 
 // DELETE /items/:itemId - deletes an item by _id deleteItem
 const deleteItem = (req, res) => {
+  const userId = req.user._id;
+
+  Item.findById(itemId)
+    .orFail()
+    .then((item) => {
+      const ownerId = item.owner.toString();
+
+      if (userId !== ownerId) {
+        return res
+          .status(forbiddenError)
+          .send({ message: "You don't have permission to delete this item" });
+      }
+    });
+
   Item.findByIdAndDelete(req.params.itemId)
     // for item with id that doesn't exist (before .then())
     .orFail()

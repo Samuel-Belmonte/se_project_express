@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/users");
 const bcrypt = require("bcryptjs");
+
+const User = require("../models/users");
 
 const {
   defaultError,
@@ -83,10 +84,11 @@ const login = (req, res) => {
         expiresIn: "7d",
       });
 
-      //send token to the client
+      // send token to the client
       res.send({ token });
     })
     .catch((err) => {
+      console.error(err);
       res
         .status(unauthorizedError)
         .send({ message: "Incorrect email or password" });
@@ -101,14 +103,14 @@ const updateUser = (req, res) => {
     { name, avatar },
     { new: true, runValidators: true }
   )
-    .then((updateUser) => {
-      if (!updateUser) {
+    .then((updatedUser) => {
+      if (!updatedUser) {
         return res
           .status(documentNotFoundError)
           .send({ message: "User not found" });
       }
 
-      return res.send(updateUser);
+      return res.send(updatedUser);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {

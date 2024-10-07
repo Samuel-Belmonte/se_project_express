@@ -8,7 +8,7 @@ const {
   dislikeItem,
 } = require("../controllers/clothingItems");
 
-//authorization
+// authorization
 router.use(auth);
 
 // curl http://localhost:3001/items

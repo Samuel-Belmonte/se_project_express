@@ -42,6 +42,7 @@ const createItem = (req, res) => {
 // DELETE /items/:itemId - deletes an item by _id deleteItem
 const deleteItem = (req, res) => {
   const userId = req.user._id;
+  const { itemId } = req.params;
 
   Item.findById(itemId)
     .orFail()

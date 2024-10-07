@@ -13,19 +13,6 @@ const {
 
 const { JWT_SECRET } = require("../utils/config");
 
-// GET /users - returns all users
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      console.error(err);
-      // change 500 so it isn't hard coded
-      return res
-        .status(defaultError)
-        .send({ message: "An error has occured on the server" });
-    });
-};
-
 // POST /users - creates a new user
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -35,10 +22,10 @@ const createUser = (req, res) => {
       // name and avatar from schema
       User.create({ name, avatar, email, password: hash })
     )
-    .then((user) => res.status(201).send(user))
+    .then(() => res.status(201).send({ name, avatar, email }))
     .catch((err) => {
       console.error(err);
-      if (err.name === 11000) {
+      if (err.code === 11000) {
         return res
           .status(duplicationError)
           .send({ message: "User with this email doesn't exist" });
@@ -54,7 +41,7 @@ const createUser = (req, res) => {
 
 // GET /users/:userId - returns a user by _id
 const getUser = (req, res) => {
-  const { userId } = req.params;
+  const { userId } = req.user._id;
   User.findById(userId)
     // for user with id that doesn't exist (before .then())
     .orFail()
@@ -78,7 +65,13 @@ const getUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
 
-  return User.findByCredentials(email, password)
+  if (!email || password) {
+    return res
+      .status(castError)
+      .send({ message: "Must enter email and password" });
+  }
+
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
@@ -88,10 +81,11 @@ const login = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
-      console.error(err);
-      res
-        .status(unauthorizedError)
-        .send({ message: "Incorrect email or password" });
+      if (err.message === "Incorrect email or password") {
+        res
+          .status(unauthorizedError)
+          .send({ message: "Incorrect email or password" });
+      }
     });
 };
 

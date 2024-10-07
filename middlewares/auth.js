@@ -10,7 +10,7 @@ const auth = (req, res, next) => {
       .status(unauthorizedError)
       .send({ message: "Authorization reuired" });
   }
-  const token = authorization.repalace("Bearer", "");
+  const token = authorization.replace("Bearer ", "");
   let payload;
 
   try {

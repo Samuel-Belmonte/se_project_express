@@ -54,9 +54,10 @@ const deleteItem = (req, res) => {
           .status(forbiddenError)
           .send({ message: "You don't have permission to delete this item" });
       }
-      return Item.findByIdAndDelete(itemId).orFail();
+      return Item.findByIdAndDelete(itemId)
+        .orFail()
+        .then((deletedItem) => res.status(200).send(deletedItem));
     })
-    .then((deletedItem) => res.status(200).send(deletedItem))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {

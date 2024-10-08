@@ -54,26 +54,22 @@ const deleteItem = (req, res) => {
           .status(forbiddenError)
           .send({ message: "You don't have permission to delete this item" });
       }
-      Item.findByIdAndDelete(req.params.itemId)
-        // for item with id that doesn't exist (before .then())
-        .orFail()
-        .then((item) => res.status(200).send(item))
-        .catch((err) => {
-          console.error(err);
-          // delete an item with an _id that does not exist in the database
-          if (err.name === "DocumentNotFoundError") {
-            return res
-              .status(documentNotFoundError)
-              .send({ message: err.message });
-          }
-          if (err.name === "CastError") {
-            return res.status(castError).send({ message: "Invalid data" });
-          }
-          // delete a user with an _id that does not exist in the database
-          return res
-            .status(defaultError)
-            .send({ message: "An error has occurred on the server" });
-        });
+      return Item.findByIdAndDelete(itemId).orFail();
+    })
+    .then((deletedItem) => res.status(200).send(deletedItem))
+    .catch((err) => {
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        return res
+          .status(documentNotFoundError)
+          .send({ message: "Item not found" });
+      }
+      if (err.name === "CastError") {
+        return res.status(castError).send({ message: "Invalid data" });
+      }
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occured on the server" });
     });
 };
 

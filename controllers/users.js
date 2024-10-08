@@ -41,7 +41,7 @@ const createUser = (req, res) => {
 
 // GET /users/:userId - returns a user by _id
 const getUser = (req, res) => {
-  const { userId } = req.user._id;
+  const userId = req.user._id;
   User.findById(userId)
     // for user with id that doesn't exist (before .then())
     .orFail()
@@ -65,7 +65,7 @@ const getUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || password) {
+  if (!email || !password) {
     return res
       .status(castError)
       .send({ message: "Must enter email and password" });
@@ -86,6 +86,9 @@ const login = (req, res) => {
           .status(unauthorizedError)
           .send({ message: "Incorrect email or password" });
       }
+      return res
+        .status(defaultError)
+        .send({ message: "An error has occured on the server" });
     });
 };
 
@@ -110,10 +113,10 @@ const updateUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(castError).send({ message: "Invalid data" });
       }
-      res
+      return res
         .status(defaultError)
         .send({ message: "An error has occured on the server" });
     });
 };
 
-module.exports = { getUsers, createUser, getUser, login, updateUser };
+module.exports = { createUser, getUser, login, updateUser };
